@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HDI Predictor — A Comprehensive Measure of Well-Being</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 36px 40px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  }
+  h1 { font-size: 22px; margin-bottom: 4px; color: #0f172a; }
+  p.subtitle { color: #64748b; margin-top: 0; margin-bottom: 24px; font-size: 14px; line-height: 1.5; }
+  label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; margin-top: 16px; }
+  select, input {
+    width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1;
+    border-radius: 8px; font-size: 14px; box-sizing: border-box; background: white;
+  }
+  .manual-fields { display: none; border-top: 1px dashed #cbd5e1; margin-top: 20px; padding-top: 4px; }
+  .manual-fields.active { display: block; }
+  button {
+    margin-top: 24px; width: 100%; padding: 12px; background: #2563eb;
+    color: white; font-weight: 600; border: none; border-radius: 8px;
+    font-size: 15px; cursor: pointer;
+  }
+  button:hover { background: #1d4ed8; }
+  .hint { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>A Comprehensive Measure of Well-Being</h1>
+    <p class="subtitle">
+      The Human Development Index (HDI) combines life expectancy, education, and
+      income into a single score that classifies countries as Very High, High,
+      Medium, or Low in human development. Select a country below, or enter
+      your own indicators to get an instant prediction.
+    </p>
+
+    <form method="POST" action="/predict" id="predictForm">
+      <label for="country_select">Select a Country</label>
+      <select name="country_select" id="country_select" onchange="toggleManual()">
+        {% for c in countries %}
+          <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+        <option value="manual">-- Enter custom values instead --</option>
+      </select>
+      <p class="hint">Choose a country for an instant prediction, or select "Enter custom values" below.</p>
+
+      <div class="manual-fields" id="manualFields">
+        <label for="life_expectancy">Life Expectancy (years)</label>
+        <input type="number" step="0.1" name="life_expectancy" id="life_expectancy" placeholder="e.g. 72.5">
+
+        <label for="mean_years_schooling">Mean Years of Schooling</label>
+        <input type="number" step="0.1" name="mean_years_schooling" id="mean_years_schooling" placeholder="e.g. 9.5">
+
+        <label for="expected_years_schooling">Expected Years of Schooling</label>
+        <input type="number" step="0.1" name="expected_years_schooling" id="expected_years_schooling" placeholder="e.g. 14">
+
+        <label for="gni_per_capita">GNI per Capita (USD, PPP)</label>
+        <input type="number" step="1" name="gni_per_capita" id="gni_per_capita" placeholder="e.g. 15000">
+      </div>
+
+      <button type="submit">Predict HDI</button>
+    </form>
+  </div>
+
+  <script>
+    function toggleManual() {
+      const select = document.getElementById('country_select');
+      const manual = document.getElementById('manualFields');
+      const inputs = manual.querySelectorAll('input');
+      if (select.value === 'manual') {
+        manual.classList.add('active');
+        inputs.forEach(i => i.setAttribute('required', 'required'));
+      } else {
+        manual.classList.remove('active');
+        inputs.forEach(i => i.removeAttribute('required'));
+      }
+    }
+  </script>
+</body>
+</html>
